@@ -59,17 +59,17 @@ public class MovieAdapter extends ArrayAdapter<String> {
     {
 
        // Movie movie = getItem(position);
-        SquaredImageView view = (SquaredImageView) convertView;
+       /* SquaredImageView view = (SquaredImageView) convertView;
         if (view == null) {
             view = new SquaredImageView(context);
-        }
+        }*/
         String movie = getItem(position);
-        /*View rootView = LayoutInflater.from(getContext()).inflate(R.layout
+        View rootView = LayoutInflater.from(getContext()).inflate(R.layout
                 .grid_item, parent, false);
-        ImageView iconView = (ImageView)rootView.findViewById(R.id.grid_item_image);*/
+        ImageView iconView = (ImageView)rootView.findViewById(R.id.grid_item_image);
         Log.v("ONPOST", movie);
-        Picasso.with(context).load(movie).resize(200,200).into(view);
+        Picasso.with(context).load(movie).into(iconView);
         Log.v("ONPOST", "INSIDE GETVIEW");
-        return view;
+        return rootView;
     }
 }
