@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 
@@ -107,6 +108,17 @@ public class MainActivityFragment extends Fragment {
         GridView gridView = (GridView) view.findViewById(R.id.grid_view);
 
         gridView.setAdapter(movieAdapter);
+
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String selectedId = ids[position];
+
+                Log.d("App", selectedId);
+                Intent intent = new Intent(getActivity(), MovieDetail.class).putExtra(Intent.EXTRA_TEXT, selectedId);
+                startActivity(intent);
+            }
+        });
 
         return view;
     }
