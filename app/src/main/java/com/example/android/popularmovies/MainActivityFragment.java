@@ -1,8 +1,11 @@
 package com.example.android.popularmovies;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -75,8 +78,14 @@ public class MainActivityFragment extends Fragment {
         if(id == R.id.action_refresh)
         {
             FetchMovieTask movieTask = new FetchMovieTask();
-            movieTask.execute("popularity.desc");
+            updateMovies();
             return  true;
+        }
+        if(id == R.id.action_settings)
+        {
+            Intent intent = new Intent(getActivity(),SettingsActivity.class);
+            this.startActivity(intent);
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -102,12 +111,21 @@ public class MainActivityFragment extends Fragment {
         return view;
     }
 
+    private void updateMovies()
+    {
+
+        FetchMovieTask fetchMovieTask = new FetchMovieTask();
+        String prefs = PreferenceManager.getDefaultSharedPreferences(getActivity())
+                .getString(getString(R.string.pref_sort_key),getString(R.string.pref_sort_popularity));
+        fetchMovieTask.execute(prefs);
+
+    }
 
     @Override
     public void onStart() {
         super.onStart();
-        FetchMovieTask fetchMovieTask = new FetchMovieTask();
-        fetchMovieTask.execute("popularity.desc");
+        updateMovies();
+
     }
 
     class FetchMovieTask extends AsyncTask<String,Void,Integer>
