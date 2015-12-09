@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 /**
  * Created by Udit on 08-12-2015.
@@ -52,5 +54,6 @@ public class MovieDetail extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
 }
 

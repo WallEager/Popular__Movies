@@ -58,5 +58,36 @@
         android:paddingTop="8dp"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"/>
+
+    <View
+        android:paddingTop="8dp"
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:background="#000000"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/trailer_icon"
+            android:paddingLeft="24dp"
+            android:paddingTop="16dp"
+            android:src="@drawable/images"
+            android:paddingBottom="16dp"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Watch Trailer Here"
+            android:layout_toRightOf="@+id/trailer_icon"
+            android:id="@+id/trailer"
+            android:paddingLeft="32dp"
+            android:paddingTop="24dp"
+            android:textSize="22dp"
+            android:layout_marginTop="24dp"/>
+    </RelativeLayout>
+
 </LinearLayout>
 </ScrollView>

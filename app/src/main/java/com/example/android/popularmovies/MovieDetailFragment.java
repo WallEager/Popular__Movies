@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -29,6 +30,7 @@ import java.net.URL;
  */
 public class MovieDetailFragment extends android.support.v4.app.Fragment {
     private  String selectedId;
+    String appendUrl;
     View rootView;
     public MovieDetailFragment()
     {
@@ -45,11 +47,25 @@ public class MovieDetailFragment extends android.support.v4.app.Fragment {
 
             FetchMovieInfoTask fetchMovieTask = new FetchMovieInfoTask();
             fetchMovieTask.execute(selectedId);
+            TextView btn = (TextView)rootView.findViewById(R.id.trailer);
+            btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String url = "https://www.youtube.com/watch?v=";
+                    url = url + appendUrl;
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse(url));
+
+                    startActivity(intent);
+                }
+            });
 
         }
 
             return rootView;
     }
+
+
 
 
     //-------------------------------------------------------------------//
@@ -66,7 +82,7 @@ public class MovieDetailFragment extends android.support.v4.app.Fragment {
 
             String url = "http://image.tmdb.org/t/p/w185/";
             title = collection.getString("name");
-            title = title.replace("Collection","");
+            title = title.replace("Collection", "");
             imageUrl=url + collection.getString("poster_path");
             synopsis=movie.getString("overview");
             release_date=movie.getString("release_date");
@@ -80,12 +96,22 @@ public class MovieDetailFragment extends android.support.v4.app.Fragment {
 
         }
 
+        private void getVideoFromJson (String videoList)
+                throws JSONException
+        {
+            JSONObject video = new JSONObject(videoList);
+            JSONArray results = video.getJSONArray("results");
+            JSONObject more = results.getJSONObject(0);
+            appendUrl = more.getString("key");
+        }
+
         @Override
         protected Integer doInBackground(String... params) {
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
 
             String movieList = null;
+            String videoList = null;
             String ID = "";
             final String APPID_PARAM = "api_key";
 
@@ -147,8 +173,68 @@ public class MovieDetailFragment extends android.support.v4.app.Fragment {
                     }
                 }
             }
+            try
+            {
+                final String MOVIE_VIDEO_URL=
+                        "http://api.themoviedb.org/3/movie";
+
+                Uri builtUti = Uri.parse(MOVIE_VIDEO_URL).buildUpon()
+                        .appendPath(params[0])
+                        .appendPath("videos")
+                        .appendQueryParameter(APPID_PARAM, BuildConfig.API_KEY)
+                        .build();
+                //CHECK--------------------
+                URL url = new URL(builtUti.toString());
+                Log.v("PRINT","Built URI " + builtUti.toString());
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+
+                // Read the input stream into a String
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuffer buffer = new StringBuffer();
+                if (inputStream == null) {
+                    // Nothing to do.
+                    videoList = null;
+                }
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
+                    // But it does make debugging a *lot* easier if you print out the completed
+                    // buffer for debugging.
+                    buffer.append(line + "\n");
+                }
+
+                if (buffer.length() == 0) {
+                    // Stream was empty.  No point in parsing.
+                    videoList = null;
+                }
+                videoList = buffer.toString();
+                Log.e("APP", "VIDEOLIST" + videoList);
+
+            } catch (IOException e) {
+                Log.e("APP", "Error ", e);
+                // If the code didn't successfully get the weather data, there's no point in attempting
+                // to parse it.
+                videoList = null;
+            }
+            finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e("ONPOST", "Error closing stream", e);
+                    }
+                }
+            }
             try {
                 getMovieFromJson(movieList);
+                getVideoFromJson(videoList);
                 Log.v("ONPOST","OHOHOHOHOHOHOHO");
             } catch (JSONException e) {
                 Log.e("APP", e.getMessage(), e);
