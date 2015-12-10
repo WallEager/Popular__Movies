@@ -89,5 +89,11 @@
             android:layout_marginTop="24dp"/>
     </RelativeLayout>
 
+    <ListView
+        android:id="@+id/list_review"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        ></ListView>
+
 </LinearLayout>
 </ScrollView>
