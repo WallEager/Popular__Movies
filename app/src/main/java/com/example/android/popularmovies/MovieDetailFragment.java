@@ -35,9 +35,10 @@ import java.util.ArrayList;
  */
 public class MovieDetailFragment extends android.support.v4.app.Fragment {
     private  String selectedId;
+    ReviewAdapter reviewAdapter;
     String appendUrl;
     View rootView;
-    ArrayList<ReviewData> list_reviews = new ArrayList<ReviewData>();
+    ArrayList<ReviewData> list_reviews;
     public MovieDetailFragment()
     {
         setHasOptionsMenu(true);
@@ -53,11 +54,15 @@ public class MovieDetailFragment extends android.support.v4.app.Fragment {
             selectedId = intent.getStringExtra(Intent.EXTRA_TEXT);
 
             FetchMovieInfoTask fetchMovieTask = new FetchMovieInfoTask();
+            list_reviews= new ArrayList<ReviewData>();
+            reviewAdapter = new ReviewAdapter(getActivity(),list_reviews);
+            ListView listView = (ListView) rootView.findViewById(R.id.list_review);
+            listView.setAdapter(reviewAdapter);
             fetchMovieTask.execute(selectedId);
-            ReviewAdapter reviewAdapter = new ReviewAdapter(getActivity(),list_reviews);
+
             Log.v("CREATE", "FINE works---");
 
-            ListView listView = (ListView) rootView.findViewById(R.id.list_review);
+
             listView.setOnTouchListener(new ListView.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
@@ -80,7 +85,7 @@ public class MovieDetailFragment extends android.support.v4.app.Fragment {
                 }
             });
 
-            listView.setAdapter(reviewAdapter);
+
             TextView btn = (TextView)rootView.findViewById(R.id.trailer);
             btn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -155,6 +160,7 @@ public class MovieDetailFragment extends android.support.v4.app.Fragment {
                 Log.v("PRINT", info.review_content);
                 list_reviews.add(info);
             }
+
             for(int i=0;i<Integer.parseInt(total_results);i++) {
                 ReviewData r =list_reviews.get(i);
                 Log.v("PRINT", r.review_name);
